@@ -7,4 +7,4 @@ using UnityEngine.Events;
 [System.Serializable] public class BoolEvent : UnityEvent<bool> { }
 [System.Serializable] public class ActorsEvent : UnityEvent<int, int> { }
 [System.Serializable] public class IntEvent : UnityEvent<int> { }
-[System.Serializable] public class PlayerEvent : UnityEvent<Player> { }
+[System.Serializable] public class PlayerEvent : UnityEvent<Ape> { }

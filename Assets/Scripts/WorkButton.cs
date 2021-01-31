@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; 
-public class BidButton : MonoBehaviour
+using UnityEngine.UI;
+public class WorkButton : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -12,6 +12,6 @@ public class BidButton : MonoBehaviour
 
     void OnBidButtonPress()
     {
-        Ape.localInstance.BidHarderRPC(); 
+        Ape.localInstance.WorkRPC();
     }
 }
