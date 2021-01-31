@@ -9,22 +9,49 @@ public class Ape : MonoBehaviourPunCallbacks
 {
 
     public static Ape localInstance;
-
-    public UnityEvent OnBidStart = new UnityEvent();
-    public UnityEvent OnBidEnd = new UnityEvent();
     public float workPayout; 
     
     public static GameObjectEvent OnLocalPlayerSet = new GameObjectEvent();
 
-    
+    public float Cash
+    {
+        get
+        {
+            return (float)photonView.Owner.CustomProperties["cash"];
+        }
+        set
+        {
+            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+            {
+                { "cash", value }
+            }; 
+            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        }
+    }
+
+    public int Bananas
+    {
+        get
+        {
+            return (int)photonView.Owner.CustomProperties["bananas"];
+        }
+        set
+        {
+            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+            {
+                { "bananas", value }
+            };
+            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+        }
+    }
+
 
     public void InitializePlayerProps()
     {
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
         {
             { "cash", 0f },
-            { "bananas", 0},
-            { "bid", 0f }
+            { "bananas", 0}
         };
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
@@ -40,12 +67,13 @@ public class Ape : MonoBehaviourPunCallbacks
                 SetLocalPlayer();
             }
         }
-        
     }
 
     private void Start()
     {
-        InitializePlayerProps();
+        if(photonView.IsMine)
+            InitializePlayerProps();
+
         photonView.Owner.TagObject = this; 
     }
 
@@ -54,38 +82,37 @@ public class Ape : MonoBehaviourPunCallbacks
         return; 
     }
 
-
-    public void BidHarderRPC()
+    public void TradeRPC()
     {
-        float newBid = GameManager.inst.GetTopBid() + 1;
-        if (GetCash() < newBid)
+        float tradeVal = GameManager.inst.TradeValue; 
+
+        if(tradeVal == 0)
         {
-            print(photonView.Owner.NickName + " insufficient funds at  $" + GetCash());
-            return;
+            print("Action failed. No snakes present.");
+        } else if(tradeVal < 0) //buy
+        {
+            print("Trying to buy...");
+
+            if(Cash > Mathf.Abs(tradeVal))
+            {
+                Bananas += 1;
+                Cash += tradeVal;
+                print("bought banana"); 
+            } else
+            {
+                print("Action failed. Insufficient funds.");
+            }
+
+        } else if (tradeVal > 0) //sell
+        {
+            return;  //todo
         }
-
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
-        {
-            { "bid", newBid }
-        };
-        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
     }
 
-    public float GetBid()
-    {
-        ExitGames.Client.Photon.Hashtable map = photonView.Owner.CustomProperties;
-        if(map.ContainsKey("bid"))
-        {
-            return (float)map["bid"]; 
-        } else
-        {
-            return -1; //not yet intialized 
-        }   
-    }
 
     public void WorkRPC()
     {
-        SetCashRPC(GetCash() + workPayout); 
+        Cash = (Cash + workPayout); 
     }
 
     #region Unity Event Methods
@@ -120,20 +147,5 @@ public class Ape : MonoBehaviourPunCallbacks
     }
     #endregion
 
-    #region Helper Methods 
 
-    public float GetCash()
-    {
-        return (float)photonView.Owner.CustomProperties["cash"]; 
-    }
-
-    public void SetCashRPC(float cashVal)
-    {
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
-        {
-            { "cash", cashVal}
-        };
-        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-    }
-    #endregion
 }

@@ -10,23 +10,38 @@ public class GameManager : MonoBehaviourPunCallbacks
     
     public float SnakeStartingPriceVariability;
 
-    public float BiddingTime; 
-    public enum SNAKE_STATES {INFO, BUY, SEll};
+    public float transactionTime, downTime; 
 
     //implementation
-    private float currentTimeBid;
+    private float curPhaseTime; 
     private Player[] players;
     private float snakeCheckInterval = 5f; 
+
+    public float TradeValue
+    {
+        get
+        {
+            return (float)PhotonNetwork.CurrentRoom.CustomProperties["trade_value"];
+        } 
+
+        set
+        {
+            curPhaseTime = 0; 
+
+            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+            {
+                { "trade_value", value}
+            };
+            PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+        }
+    }
 
     public void InitializeRoomProps()
     {
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
         {
-            { "base_banana_value", 8f},
-
-            { "starting bid", 0f},
-
-            { "top_bidder_num", -1 }
+            { "base_value", 8f},
+            { "trade_value", 0f}
         };
         PhotonNetwork.CurrentRoom.SetCustomProperties(props);
     }
@@ -52,33 +67,26 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        if (GetSnakeBidding())
+        if (IsPropertiesInitialized())
         {
-            currentTimeBid += Time.deltaTime;
+            curPhaseTime += Time.deltaTime;
         }
     }
 
-    public void EndSnakeBidding()
-    {
-        return; 
-    }
 
     #region Pun Callbacks
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
     {
         base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
 
-        if (changedProps.ContainsKey("bid") && (float)changedProps["bid"] != 0)
-        {
-            if(PhotonNetwork.IsMasterClient)
-                SetTopBidderRPC(GetHighestBidder());
-
-            print(targetPlayer.NickName + " bids for  $" + (float)changedProps["bid"]);
-        }
-
         if (changedProps.ContainsKey("cash"))
         {
             print(targetPlayer.NickName + " now has $" + (float)changedProps["cash"]);
+        }
+
+        if (changedProps.ContainsKey("bananas"))
+        {
+            print(targetPlayer.NickName + " banana count: " + (int)changedProps["bananas"]);
         }
     }
 
@@ -86,15 +94,19 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         base.OnRoomPropertiesUpdate(propertiesThatChanged);
 
-        if(propertiesThatChanged.ContainsKey("top_bidder_num") && (int)propertiesThatChanged["top_bidder_num"] != -1)
+        if (propertiesThatChanged.ContainsKey("trade_value"))
         {
-            Ape topBidder = (Ape)(GetTopBidder().TagObject);
-            print(GetTopBidder().NickName + " is now highest Bidder."); 
-        }
-
-        if (propertiesThatChanged.ContainsKey("starting_bid") && (float)propertiesThatChanged["starting_bid"] != 0f)
-        {
-            print("Bidding opens at $" + (float)propertiesThatChanged["starting_bid"]);
+            if(TradeValue == 0) 
+            {
+                print("There are no snakes."); 
+            } else if (TradeValue < 0)
+            {
+                print("Selling bananas for $" + TradeValue);
+            } else if (TradeValue > 0)
+            {
+                print("Buying bananas for $" + TradeValue); 
+            }
+        
         }
     }
     #endregion 
@@ -102,80 +114,33 @@ public class GameManager : MonoBehaviourPunCallbacks
     #region Important RPC 
     public void StartNewSnakeRPC()
     {
-        float baseBanVal = (float)PhotonNetwork.CurrentRoom.CustomProperties["base_banana_value"];
+        curPhaseTime = 0; //this is set twice to 0, once extra early to avoid next-frame bugs when updates did not occur
+        float baseBanVal = (float)PhotonNetwork.CurrentRoom.CustomProperties["base_value"];
         float startingPrice = baseBanVal + Random.Range(SnakeStartingPriceVariability * -1, SnakeStartingPriceVariability);
+        
+        TradeValue = startingPrice * -1; 
+       
+    }
 
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
-        {
-            { "snake_state", 1}, //0  info, 1 buy, 2 sell
-            { "snake_in_progress", true},
-            { "snake_bidding", true},
-            { "snake_starting_price", startingPrice}
-        };
-        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
-        return; 
+    public void StopSnakeRPC()
+    {
+        curPhaseTime = 0; 
+        TradeValue = 0; 
     }
     #endregion
 
 
     #region Private Methods 
-    private bool GetSnakeBidding()
-    {
-        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("snake_bidding"))
-            return (bool)PhotonNetwork.CurrentRoom.CustomProperties["snake_bidding"];
-        else
-            return false;
-    }
-
-    private int GetHighestBidder()
-    {
-        float[] bids = new float[PhotonNetwork.CountOfPlayers];
-        List<Player> players = PhotonNetwork.PlayerList.ToList<Player>();
-        players.Sort(comparePlayerBids);
-        return players[0].ActorNumber;
-    }
 
 
-    int comparePlayerBids(Player p1, Player p2)
+    public bool GetSnakePresent()
     {
-
-        return (int)(((float)p2.CustomProperties["bid"] - (float)p1.CustomProperties["bid"]) * 100);
-    }
-
-    void SetTopBidderRPC(int topBidderActorNum)
-    {
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
-        {
-            { "top_bidder_num", topBidderActorNum},
-        };
-        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
-    }
-   
-    Player GetTopBidder()
-    {
-        int topBidNum = (int)PhotonNetwork.CurrentRoom.CustomProperties["top_bidder_num"];
-        if (topBidNum == -1)
-            return null; 
-        else
-            return PhotonNetwork.CurrentRoom.GetPlayer(topBidNum); 
-    }
-
-    public float GetTopBid()
-    {
-        Player topBidder = GetTopBidder(); 
-        if (topBidder == null)
-        {
-            return 0; 
-        } else
-        {
-            return (float)topBidder.CustomProperties["bid"];
-        }
-        
+        return TradeValue != 0;
     }
 
     private bool IsPropertiesInitialized()
     {
-        return PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("snake_state"); 
+        return PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("trade_value"); 
     }
     #endregion
 
@@ -186,11 +151,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (PhotonNetwork.IsMasterClient && IsPropertiesInitialized())
             {
-                if (!(bool)PhotonNetwork.CurrentRoom.CustomProperties["snake_in_progress"])
+                if (!GetSnakePresent() && curPhaseTime > downTime)
+                {
                     StartNewSnakeRPC();
-
-                if (currentTimeBid > BiddingTime)
-                    EndSnakeBidding();
+              
+                } else if (GetSnakePresent() &&  curPhaseTime > transactionTime)
+                {
+                    StopSnakeRPC();
+                }
             }
             yield return new WaitForSeconds(snakeCheckInterval);
         }
