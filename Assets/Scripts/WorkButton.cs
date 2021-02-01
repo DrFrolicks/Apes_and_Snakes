@@ -12,6 +12,6 @@ public class WorkButton : MonoBehaviour
 
     void OnBidButtonPress()
     {
-        Ape.localInstance.WorkRPC();
+        Hand.localInstance.WorkRPC();
     }
 }

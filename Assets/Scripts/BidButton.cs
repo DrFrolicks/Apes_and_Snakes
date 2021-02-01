@@ -12,7 +12,6 @@ public class BidButton : MonoBehaviour
 
     void OnBidButtonPress()
     {
-        print("pressed");
-        Ape.localInstance.TradeRPC(); 
+        return;
     }
 }

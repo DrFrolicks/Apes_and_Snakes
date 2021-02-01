@@ -5,42 +5,26 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.Events; 
 
-public class Ape : MonoBehaviourPunCallbacks
+public class Hand : MonoBehaviourPunCallbacks
 {
 
-    public static Ape localInstance;
+    public static Hand localInstance;
     public float workPayout; 
     
     public static GameObjectEvent OnLocalPlayerSet = new GameObjectEvent();
 
-    public float Cash
+    public float Worth
     {
         get
         {
-            return (float)photonView.Owner.CustomProperties["cash"];
+            return (float)photonView.Owner.CustomProperties["worth"];
         }
         set
         {
             ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
             {
-                { "cash", value }
+                { "worth", value},
             }; 
-            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-        }
-    }
-
-    public int Bananas
-    {
-        get
-        {
-            return (int)photonView.Owner.CustomProperties["bananas"];
-        }
-        set
-        {
-            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
-            {
-                { "bananas", value }
-            };
             PhotonNetwork.LocalPlayer.SetCustomProperties(props);
         }
     }
@@ -51,7 +35,7 @@ public class Ape : MonoBehaviourPunCallbacks
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
         {
             { "cash", 0f },
-            { "bananas", 0}
+            { "invested", false }
         };
 
         PhotonNetwork.LocalPlayer.SetCustomProperties(props);
@@ -82,37 +66,10 @@ public class Ape : MonoBehaviourPunCallbacks
         return; 
     }
 
-    public void TradeRPC()
-    {
-        float tradeVal = GameManager.inst.TradeValue; 
-
-        if(tradeVal == 0)
-        {
-            print("Action failed. No snakes present.");
-        } else if(tradeVal < 0) //buy
-        {
-            print("Trying to buy...");
-
-            if(Cash > Mathf.Abs(tradeVal))
-            {
-                Bananas += 1;
-                Cash += tradeVal;
-                print("bought banana"); 
-            } else
-            {
-                print("Action failed. Insufficient funds.");
-            }
-
-        } else if (tradeVal > 0) //sell
-        {
-            return;  //todo
-        }
-    }
-
 
     public void WorkRPC()
     {
-        Cash = (Cash + workPayout); 
+        Worth = (Worth + workPayout); 
     }
 
     #region Unity Event Methods
