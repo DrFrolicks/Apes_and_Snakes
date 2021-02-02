@@ -59,7 +59,7 @@ public class UbhShotCtrlInspector : Editor
         else
         {
             bool isShotErr = true;
-            foreach (UbhShotCtrl.ShotInfo shotInfo in obj.m_shotList)
+            foreach (ShotInfo shotInfo in obj.m_shotList)
             {
                 if (shotInfo.m_shotObj != null)
                 {
@@ -68,7 +68,7 @@ public class UbhShotCtrlInspector : Editor
                 }
             }
             bool isDelayErr = true;
-            foreach (UbhShotCtrl.ShotInfo shotInfo in obj.m_shotList)
+            foreach (ShotInfo shotInfo in obj.m_shotList)
             {
                 if (0f < shotInfo.m_afterDelay)
                 {

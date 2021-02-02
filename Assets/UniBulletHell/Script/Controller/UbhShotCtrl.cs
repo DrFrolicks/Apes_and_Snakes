@@ -5,6 +5,24 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
 
+[Serializable]
+public class ShotInfo
+{
+    public ShotInfo(UbhBaseShot shot, float delay)
+    {
+        m_shotObj = shot;
+        m_afterDelay = delay;
+    }
+
+    // "Set a shot pattern component (inherits UbhBaseShot)."
+    [FormerlySerializedAs("_ShotObj")]
+    public UbhBaseShot m_shotObj;
+    // "Set a delay time to starting next shot pattern. (sec)"
+    [FormerlySerializedAs("_AfterDelay")]
+    public float m_afterDelay;
+}
+
+
 /// <summary>
 /// Ubh shot ctrl.
 /// </summary>
@@ -19,18 +37,6 @@ public sealed class UbhShotCtrl : UbhMonoBehaviour
         UpdateIndex,
         FinishShot,
     }
-
-    [Serializable]
-    public class ShotInfo
-    {
-        // "Set a shot pattern component (inherits UbhBaseShot)."
-        [FormerlySerializedAs("_ShotObj")]
-        public UbhBaseShot m_shotObj;
-        // "Set a delay time to starting next shot pattern. (sec)"
-        [FormerlySerializedAs("_AfterDelay")]
-        public float m_afterDelay;
-    }
-
     // "Axis on bullet move."
     [FormerlySerializedAs("_AxisMove")]
     public UbhUtil.AXIS m_axisMove = UbhUtil.AXIS.X_AND_Y;
@@ -288,5 +294,12 @@ public sealed class UbhShotCtrl : UbhMonoBehaviour
                 m_shotList[i].m_shotObj.FinishedShot();
             }
         }
+    }
+    
+
+    public void Shoot(int index)
+    {
+        m_shotList[index].m_shotObj.SetShotCtrl(this);
+        m_shotList[index].m_shotObj.Shot();
     }
 }
