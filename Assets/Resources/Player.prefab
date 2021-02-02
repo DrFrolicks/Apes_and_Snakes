@@ -128,7 +128,7 @@ GameObject:
   - component: {fileID: 921747510588056106}
   - component: {fileID: 4574762033145988445}
   - component: {fileID: 5603960162660660679}
-  - component: {fileID: -7461717687011823847}
+  - component: {fileID: -4738657989067084920}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -240,7 +240,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c336677cf4800241ace010c1602e6c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  workPayout: 7.25
+  invulnerableTime: 2
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
+  OnWorthChange:
+    m_PersistentCalls:
+      m_Calls: []
+  OnInvestedChange:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5603960162660660679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,7 +263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nameTag: {fileID: 9068139985719793334}
---- !u!114 &-7461717687011823847
+--- !u!114 &-4738657989067084920
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -266,7 +275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34055972688e91042be149041e4d64e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
+  speed: 5
 --- !u!1 &6941499456884568107
 GameObject:
   m_ObjectHideFlags: 0

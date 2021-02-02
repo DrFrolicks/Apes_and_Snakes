@@ -104,21 +104,13 @@ public class UbhDestroyArea : UbhMonoBehaviour
 
     private void HitCheck(Transform colTrans)
     {
-        // *It is compared with name in order to separate as Asset from project settings.
-        //  However, it is recommended to use Layer or Tag.
-        string goName = colTrans.name;
-        if (goName.Contains(UbhPlayer.NAME_ENEMY_BULLET) ||
-            goName.Contains(UbhEnemy.NAME_PLAYER_BULLET))
+        if (colTrans.CompareTag("Bullet"))
         {
             UbhBullet bullet = colTrans.parent.GetComponentInParent<UbhBullet>();
             if (bullet != null && bullet.isActive)
             {
                 UbhObjectPool.instance.ReleaseBullet(bullet);
             }
-        }
-        else if (goName.Contains(UbhEnemy.NAME_PLAYER) == false)
-        {
-            Destroy(colTrans.gameObject);
         }
     }
 }

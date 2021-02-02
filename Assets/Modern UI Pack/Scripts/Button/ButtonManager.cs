@@ -122,5 +122,11 @@ namespace Michsky.UI.ModernUIPack
         {
             isPointerOn = false;
         }
+
+        public void SetButtonText(string s)
+        {
+            buttonText = s;
+            UpdateUI();
+        }
     }
 }

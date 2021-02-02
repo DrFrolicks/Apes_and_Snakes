@@ -7,17 +7,37 @@ using System.Linq;
 public class GameManager : MonoBehaviourPunCallbacks
 {
     public static GameManager inst;
+   
     public Transform spawnPos; 
 
     //implementation
     private Player[] players;
 
+    #region Photon Custom Properties Properties 
+    public float DipRate
+    {
+        get
+        {
+            
+            return (float)PhotonNetwork.CurrentRoom.CustomProperties["dip_rate"];
+        }
+        set
+        {
+            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+            {
+                { "dip_rate", value},
+            };
+            PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+        }
+    }
+    #endregion
+
     public void InitializeRoomProps()
     {
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
         {
-            { "volatility", 1},
-            { "gain_frequency", 0 }
+            {"dip_rate", 0.1f},
+            { "rally_rate", 0.2f}
         };
         PhotonNetwork.CurrentRoom.SetCustomProperties(props);
     }
@@ -26,17 +46,17 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if (inst == null)
             inst = this;
+
+        if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == 1)
+        {
+            InitializeRoomProps();
+        }
     }
 
 
     // Start is called before the first frame update
     void Start()
     {
-        if(PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == 1)
-        {
-            InitializeRoomProps(); 
-        }
-
         PhotonNetwork.Instantiate("Player", spawnPos.position, Quaternion.identity);
     }
 
