@@ -13,14 +13,16 @@ public class Hand : MonoBehaviourPunCallbacks
 
     public float invulnerableTime;
 
-    public UnityEvent OnHit = new UnityEvent();
-    public UnityEvent OnTendyGain = new UnityEvent(); 
+    public BoolEvent OnMovement = new BoolEvent(); 
 
     float lastTimeHit = 0;
 
     public FloatEvent OnWorthChange = new FloatEvent();
-    public BoolEvent OnInvestedChange = new BoolEvent(); 
-    
+    public BoolEvent OnInvestedChange = new BoolEvent();
+    public UnityEvent OnDeath = new UnityEvent(); 
+
+    PlayerMovement playerMovement; 
+
     #region Photon Custom Properties Properties
     public float Worth
     {
@@ -30,7 +32,7 @@ public class Hand : MonoBehaviourPunCallbacks
         }
         set
         {
-            print("invoking " + value); 
+            //print("invoking " + value); 
             OnWorthChange.Invoke(value);
             ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
             {
@@ -79,7 +81,8 @@ public class Hand : MonoBehaviourPunCallbacks
         if(photonView.IsMine)
             InitializePlayerProps();
 
-        photonView.Owner.TagObject = this; 
+        photonView.Owner.TagObject = this;
+        playerMovement = GetComponent<PlayerMovement>(); 
     }
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
@@ -109,6 +112,9 @@ public class Hand : MonoBehaviourPunCallbacks
     public void OnTriggerEnter2D(Collider2D collision)
     {
 
+        if (!Invested)
+            return; 
+
         if (!photonView.IsMine)
         {
             if (collision.CompareTag("Tendy") && Time.time > lastTimeHit + invulnerableTime)
@@ -117,6 +123,9 @@ public class Hand : MonoBehaviourPunCallbacks
             }
             return;
         }
+
+
+
 
        if(collision.CompareTag("Bullet") && Time.time > lastTimeHit + invulnerableTime)
         {
@@ -142,6 +151,8 @@ public class Hand : MonoBehaviourPunCallbacks
                 print("Error: Already invested");
                 return;
             }
+            transform.position = GameManager.inst.spawnPos.position;
+            
         } else
         {
             if (!Invested)
@@ -175,15 +186,8 @@ public class Hand : MonoBehaviourPunCallbacks
             
             lastTimeHit = Time.time; 
         }
-        
-       if(dip)
-        {
-            OnHit.Invoke();
-        } else
-        {
-            OnTendyGain.Invoke(); 
-        }
-        
+
+        OnMovement.Invoke(dip); 
     }
 
     #endregion
@@ -204,7 +208,7 @@ public class Hand : MonoBehaviourPunCallbacks
     {
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
         {
-            { "worth", 7.25f },
+            { "worth", 1f },
             { "invested", false }
         };
 

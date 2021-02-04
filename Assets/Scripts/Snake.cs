@@ -6,6 +6,8 @@ using Photon.Pun;
 
 public class Snake : MonoBehaviourPun
 {
+
+    //within wave
     public float volleyInterval, snakeInterval;
     public int volleysPerSnake;
     public float snakeAttackDelay;

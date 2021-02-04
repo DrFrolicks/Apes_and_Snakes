@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     //implementation
     private Player[] players;
+    private List<Player> leaderboard; 
 
     #region Photon Custom Properties Properties 
     public float DipRate
@@ -84,15 +85,25 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
 
-        if (changedProps.ContainsKey("worth"))
-        {
-            print(targetPlayer.NickName + " now has $" + (float)changedProps["worth"]);
-        }
+        //if (changedProps.ContainsKey("worth"))
+        //{
+        //    print(targetPlayer.NickName + " now has $" + (float)changedProps["worth"]);
+        //}
     }
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
         base.OnRoomPropertiesUpdate(propertiesThatChanged);
+    }
+
+    private void OnPlayerConnected(Player player)
+    {
+        players = PhotonNetwork.PlayerList; 
+    }
+
+    private void OnPlayerDisconnected(Player player)
+    {
+        players = PhotonNetwork.PlayerList; 
     }
     #endregion 
 
@@ -107,6 +118,32 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         return PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("volatility"); 
     }
+
+    Player GetRichestPlayer()
+    {
+        return leaderboard[0];
+    }
+
+    void UpdateLeaderboard()
+    {
+        leaderboard = players.ToList();
+        leaderboard.Sort(ComparePlayerWorth);
+
+        string lbString = "";
+        foreach (Player p in leaderboard)
+        {
+            string money = ((float)p.CustomProperties["worth"]).ToMoney(); 
+            lbString += $"{p.NickName} {money}\n";
+        }
+
+        //leaderBoardDisplay.text = lbString;
+    }
+
+    int ComparePlayerWorth(Player p1, Player p2)
+    {
+        return (int)( ((float)p2.CustomProperties["worth"] - (float)p1.CustomProperties["worth"])  * 100);
+    }
+
     #endregion
 
     #region Coroutines

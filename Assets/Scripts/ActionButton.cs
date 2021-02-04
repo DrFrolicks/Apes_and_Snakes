@@ -28,7 +28,7 @@ public class ActionButton : MonoBehaviour
     
     public void RespondToWorthChange(float worth)
     {
-        print("setting new worth as " + worth); 
+        //print("setting new worth as " + worth); 
         string newString = bm.buttonText.Substring(0, bm.buttonText.IndexOf("$"));
         newString += worth.ToMoney();
         bm.SetButtonText(newString); 
@@ -36,7 +36,6 @@ public class ActionButton : MonoBehaviour
 
     public void RespondToInvested(bool invested)
     {
-        print("trying to resond to invested"); 
         if (!invested)
         {
             bm.SetButtonText($"YOLO - {Hand.localInstance.Worth.ToMoney()}");
