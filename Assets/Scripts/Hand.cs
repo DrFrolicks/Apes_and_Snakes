@@ -13,7 +13,8 @@ public class Hand : MonoBehaviourPunCallbacks
 
     public float invulnerableTime;
 
-    public UnityEvent OnHit = new UnityEvent(); 
+    public UnityEvent OnHit = new UnityEvent();
+    public UnityEvent OnTendyGain = new UnityEvent(); 
 
     float lastTimeHit = 0;
 
@@ -29,7 +30,8 @@ public class Hand : MonoBehaviourPunCallbacks
         }
         set
         {
-            OnWorthChange.Invoke(Worth);  
+            print("invoking " + value); 
+            OnWorthChange.Invoke(value);
             ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
             {
                 { "worth", value},
@@ -59,17 +61,6 @@ public class Hand : MonoBehaviourPunCallbacks
     }
     #endregion
 
-
-    public void InitializePlayerProps()
-    {
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
-        {
-            { "worth", 7.25f },
-            { "invested", false }
-        };
-
-        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-    }
 
 
     private void Awake()
@@ -117,46 +108,87 @@ public class Hand : MonoBehaviourPunCallbacks
     #region Unity Callbacks
     public void OnTriggerEnter2D(Collider2D collision)
     {
-       if (!photonView.IsMine)
-            return;
 
+        if (!photonView.IsMine)
+        {
+            if (collision.CompareTag("Tendy") && Time.time > lastTimeHit + invulnerableTime)
+            {
+                Destroy(collision.gameObject);
+            }
+            return;
+        }
 
        if(collision.CompareTag("Bullet") && Time.time > lastTimeHit + invulnerableTime)
         {
-            ApplyDipRPC(); 
-        }
+            ApplyMovementRPC(true); 
+        } 
+       if(collision.CompareTag("Tendy") && Time.time > lastTimeHit + invulnerableTime)
+        {
+            ApplyMovementRPC(false);
+            Destroy(collision.gameObject); 
+        } 
     }
+
     #endregion
 
     #region RPC
 
-    public void InvestRPC()
+    public void TransactionRPC(bool invest)
     {
-        if(Invested)
+        if(invest)
         {
-            print("Error: Already invested"); 
+            if (Invested)
+            {
+                print("Error: Already invested");
+                return;
+            }
+        } else
+        {
+            if (!Invested)
+            {
+                print("Error: Already sold");
+                return; 
+            }
         }
 
-        Invested = true; 
+        Invested = invest;
     }
-    public void ApplyDipRPC()
+
+
+    public void ApplyMovementRPC(bool dip)
     {
-        photonView.RPC("RPC_ApplyDip", RpcTarget.All); 
+        photonView.RPC("RPC_ApplyMovement", RpcTarget.All, dip); 
     }
 
     [PunRPC] 
-    void RPC_ApplyDip()
+    void RPC_ApplyMovement(bool dip)
     {
        if(photonView.IsMine)
         {
-            Worth = Worth - (Worth * GameManager.inst.DipRate);
+            if (dip)
+            {
+                Worth = Worth - (Worth * GameManager.inst.DipRate);
+            } else
+            {
+                Worth = Worth + (Worth * GameManager.inst.RallyRate);
+            }
+            
             lastTimeHit = Time.time; 
         }
         
-        OnHit.Invoke(); 
+       if(dip)
+        {
+            OnHit.Invoke();
+        } else
+        {
+            OnTendyGain.Invoke(); 
+        }
+        
     }
+
     #endregion
-    #region Custom Methods
+
+    #region Private Methods
     /// <summary>
     /// set itself as LocalPlayerInstance
     /// invokes OnLocalPlayerSet event
@@ -166,6 +198,17 @@ public class Hand : MonoBehaviourPunCallbacks
         localInstance = this;
         OnLocalPlayerSet.Invoke(gameObject);
         gameObject.name = "Local Player";
+    }
+
+    void InitializePlayerProps()
+    {
+        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+        {
+            { "worth", 7.25f },
+            { "invested", false }
+        };
+
+        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
     }
     #endregion
 

@@ -244,6 +244,9 @@ MonoBehaviour:
   OnHit:
     m_PersistentCalls:
       m_Calls: []
+  OnTendyGain:
+    m_PersistentCalls:
+      m_Calls: []
   OnWorthChange:
     m_PersistentCalls:
       m_Calls: []

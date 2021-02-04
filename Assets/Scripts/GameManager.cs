@@ -30,6 +30,22 @@ public class GameManager : MonoBehaviourPunCallbacks
             PhotonNetwork.CurrentRoom.SetCustomProperties(props);
         }
     }
+    public float RallyRate
+    {
+        get
+        {
+
+            return (float)PhotonNetwork.CurrentRoom.CustomProperties["rally_rate"];
+        }
+        set
+        {
+            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+            {
+                { "rally_rate", value},
+            };
+            PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+        }
+    }
     #endregion
 
     public void InitializeRoomProps()

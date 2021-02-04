@@ -23,21 +23,14 @@ public class ActionButton : MonoBehaviour
     }
     void OnButtonPress()
     {
-        if(!Hand.localInstance.Invested)
-        {
-            print("trie"); 
-            Hand.localInstance.InvestRPC(); 
-        } else
-        {
-            return;
-        }
+        Hand.localInstance.TransactionRPC(!Hand.localInstance.Invested); 
     }
     
     public void RespondToWorthChange(float worth)
     {
-        print("trying to respond to worth"); 
+        print("setting new worth as " + worth); 
         string newString = bm.buttonText.Substring(0, bm.buttonText.IndexOf("$"));
-        newString += Hand.localInstance.Worth.ToMoney();
+        newString += worth.ToMoney();
         bm.SetButtonText(newString); 
     } 
 
@@ -50,9 +43,8 @@ public class ActionButton : MonoBehaviour
             bm.startColor = Color.green; 
         } else
         {
-            print("tried to pull out ");
             bm.SetButtonText($"PULL OUT - {Hand.localInstance.Worth.ToMoney()}"); 
-            bm.startColor = Color.red; 
+            bm.startColor = Color.red;  
         }
     } 
 }
