@@ -354,6 +354,9 @@ MonoBehaviour:
   nameTag: {fileID: 9068139985719793334}
   movementDisplay: {fileID: 411879949280839921}
   sprites: {fileID: 422515237879931953}
+  OnInvestChange:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &-4738657989067084920
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -74,8 +74,8 @@ public class Hand : MonoBehaviourPunCallbacks
         }
     }
     #endregion
-
-
+    
+  
 
     private void Awake()
     {

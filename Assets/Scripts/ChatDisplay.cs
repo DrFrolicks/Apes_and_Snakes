@@ -25,7 +25,7 @@ public class ChatDisplay : MonoBehaviourPun
 
     private void Update()
     {
-        if (lastSpeakTime < Time.time + duration)
+        if (lastSpeakTime + duration < Time.time)
             textMesh.text = ""; 
     }
 

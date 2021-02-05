@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
-using TMPro; 
+using TMPro;
 public class PlayerAppearance : MonoBehaviourPun
 {
     public TextMeshPro nameTag;
@@ -11,6 +11,7 @@ public class PlayerAppearance : MonoBehaviourPun
 
     public GameObject sprites;
 
+    public BoolEvent OnInvestChange = new BoolEvent(); 
     float flashSeconds;
     Hand hand;
 
@@ -65,7 +66,6 @@ public class PlayerAppearance : MonoBehaviourPun
 
     void RespondToInvestedChange(bool invested)
     {
-        print("appearance received invested as " + invested);
         sprites.SetActive(invested);
         nameTag.enabled = invested; 
     }
