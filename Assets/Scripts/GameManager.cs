@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
-using System.Linq; 
+using System.Linq;
+using UnityEngine.Events; 
 public class GameManager : MonoBehaviourPunCallbacks
 {
     public static GameManager inst;
@@ -12,8 +13,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     //implementation
     private Player[] players;
-    private List<Player> leaderboard; 
+    private List<Player> leaderboard;
 
+    public UnityEvent OnLeaderboardChange = new UnityEvent();
+    public IntEvent OnRichestChange = new IntEvent(); 
     #region Photon Custom Properties Properties 
     public float DipRate
     {
@@ -47,6 +50,23 @@ public class GameManager : MonoBehaviourPunCallbacks
             PhotonNetwork.CurrentRoom.SetCustomProperties(props);
         }
     }
+
+    public int RichestPlayerNum
+    {
+        get
+        {
+
+            return (int)PhotonNetwork.CurrentRoom.CustomProperties["richest"];
+        }
+        set
+        {
+            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+            {
+                { "richest", value},
+            };
+            PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+        }
+    }
     #endregion
 
     public void InitializeRoomProps()
@@ -54,7 +74,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
         {
             {"dip_rate", 0.1f},
-            { "rally_rate", 0.2f}
+            { "rally_rate", 0.2f},
+            { "richest", -1 }
         };
         PhotonNetwork.CurrentRoom.SetCustomProperties(props);
     }
@@ -67,6 +88,9 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.PlayerCount == 1)
         {
             InitializeRoomProps();
+        }else
+        {
+            StartCoroutine(InitializeOtherGM());
         }
     }
 
@@ -75,9 +99,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Start()
     {
         PhotonNetwork.Instantiate("Player", spawnPos.position, Quaternion.identity);
+        players = PhotonNetwork.PlayerList;
     }
-
-
 
 
     #region Pun Callbacks
@@ -85,23 +108,30 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
 
-        //if (changedProps.ContainsKey("worth"))
-        //{
-        //    print(targetPlayer.NickName + " now has $" + (float)changedProps["worth"]);
-        //}
+        if (changedProps.ContainsKey("worth"))
+        {
+            //print(targetPlayer.NickName + " now has $" + (float)changedProps["worth"]);
+
+            if(PhotonNetwork.IsMasterClient)
+                UpdateLeaderboard(); 
+
+        }
     }
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
         base.OnRoomPropertiesUpdate(propertiesThatChanged);
+
+        if (propertiesThatChanged.ContainsKey("richest"))
+            OnRichestChange.Invoke((int)propertiesThatChanged["richest"]); 
     }
 
-    private void OnPlayerConnected(Player player)
+    public override void OnPlayerLeftRoom(Player player)
     {
         players = PhotonNetwork.PlayerList; 
     }
 
-    private void OnPlayerDisconnected(Player player)
+    public override void OnPlayerEnteredRoom(Player player)
     {
         players = PhotonNetwork.PlayerList; 
     }
@@ -119,13 +149,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         return PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("volatility"); 
     }
 
-    Player GetRichestPlayer()
-    {
-        return leaderboard[0];
-    }
-
     void UpdateLeaderboard()
     {
+        if (players == null)
+            return; 
+
         leaderboard = players.ToList();
         leaderboard.Sort(ComparePlayerWorth);
 
@@ -136,7 +164,24 @@ public class GameManager : MonoBehaviourPunCallbacks
             lbString += $"{p.NickName} {money}\n";
         }
 
+        OnLeaderboardChange.Invoke();
         //leaderBoardDisplay.text = lbString;
+
+        //get richest 
+        int richestIndex = 0;
+        while (!leaderboard[richestIndex].CustomProperties.ContainsKey("invested") ||
+            !(bool)leaderboard[richestIndex].CustomProperties["invested"])
+        {
+
+            richestIndex++;
+            if (richestIndex >= leaderboard.Count)
+            {
+                RichestPlayerNum = -1;
+                return;
+            }
+                
+        }
+        RichestPlayerNum = leaderboard[richestIndex].ActorNumber; 
     }
 
     int ComparePlayerWorth(Player p1, Player p2)
@@ -147,6 +192,15 @@ public class GameManager : MonoBehaviourPunCallbacks
     #endregion
 
     #region Coroutines
+
+    IEnumerator InitializeOtherGM()
+    {
+        while (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("richest"))
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        OnRichestChange.Invoke(RichestPlayerNum);
+    }
     #endregion
 
 

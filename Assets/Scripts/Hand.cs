@@ -28,7 +28,14 @@ public class Hand : MonoBehaviourPunCallbacks
     {
         get
         {
-            return (float)photonView.Owner.CustomProperties["worth"];
+            if (!photonView.Owner.CustomProperties.ContainsKey("worth"))
+            {
+                return 1; 
+            } else
+            {
+                return (float)photonView.Owner.CustomProperties["worth"];
+            }
+
         }
         set
         {
@@ -46,13 +53,18 @@ public class Hand : MonoBehaviourPunCallbacks
     {
         get
         {
-            return (bool)photonView.Owner.CustomProperties["invested"];
+            if (!photonView.Owner.CustomProperties.ContainsKey("invested"))
+            {
+                return false; 
+            }
+            else
+            {
+                return (bool)photonView.Owner.CustomProperties["invested"];
+            }
+
         }
         set
         {
-            if (value == Invested)
-                return;
-
             OnInvestedChange.Invoke(value); 
             ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
             {
@@ -78,18 +90,23 @@ public class Hand : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+
         if(photonView.IsMine)
-            InitializePlayerProps();
+        {
+            Worth = 1;
+            Invested = false; 
+        } else
+        {
+            StartCoroutine(InitializeOtherPlayers());
+        }
+
 
         photonView.Owner.TagObject = this;
         playerMovement = GetComponent<PlayerMovement>(); 
     }
 
-    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
-    {
-        return; 
-    }
-
+    
+    
     #region Unity Event Methods
     /// <summary>
     /// Executes the given function when the player loads, with the player's gameobject as a parameter. 
@@ -204,15 +221,14 @@ public class Hand : MonoBehaviourPunCallbacks
         gameObject.name = "Local Player";
     }
 
-    void InitializePlayerProps()
+    IEnumerator InitializeOtherPlayers()
     {
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+        while(!photonView.Owner.CustomProperties.ContainsKey("invested"))
         {
-            { "worth", 1f },
-            { "invested", false }
-        };
-
-        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+            yield return new WaitForEndOfFrame(); 
+        }
+        OnInvestedChange.Invoke(Invested);
+        OnWorthChange.Invoke(Worth);
     }
     #endregion
 

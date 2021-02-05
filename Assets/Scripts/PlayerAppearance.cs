@@ -12,26 +12,24 @@ public class PlayerAppearance : MonoBehaviourPun
     public GameObject sprites;
 
     float flashSeconds;
-    Hand hand; 
+    Hand hand;
 
+    private void Awake()
+    {
+        hand = GetComponent<Hand>();
+        hand.OnMovement.AddListener(CallFlash);
+        hand.OnMovement.AddListener(ShowMovement);
+        hand.OnInvestedChange.AddListener(RespondToInvestedChange);
+    }
     // Start is called before the first frame update
     void Start()
     {
         nameTag.text = photonView.Owner.NickName;
-        hand = GetComponent<Hand>();
-        hand.OnMovement.AddListener(CallFlash);
-        hand.OnMovement.AddListener(ShowMovement);
-        hand.OnInvestedChange.AddListener(RespondToInvestedChange); 
+
         flashSeconds = hand.invulnerableTime;
 
         if (!photonView.IsMine)
             SetOpacity(0.5f);
-
-
-        //default to uninvested appearance
-        RespondToInvestedChange(false); 
-        
-        
     }
 
     void ShowMovement(bool dip) 
@@ -50,7 +48,7 @@ public class PlayerAppearance : MonoBehaviourPun
             movementDisplay.color = Color.green; 
         }
         percent = Mathf.RoundToInt(percent * 100);
-        movementDisplay.text = symbol + percent.ToString();
+        movementDisplay.text = symbol + percent.ToString() + "%";
         Invoke("TurnOffMovementDisplay", hand.invulnerableTime); 
     }
 

@@ -94,11 +94,16 @@ public class Snake : MonoBehaviourPun
 
     void SpawnRallies()
     {
-        int spawnNum = Mathf.Clamp((int)(PhotonNetwork.CountOfPlayers * 0.75f),1, int.MaxValue); 
-        for(int i = 0; i < spawnNum; i++)
+        
+        int spawnNum = Mathf.Clamp((int)(PhotonNetwork.CountOfPlayers * 0.8f),1, int.MaxValue);
+        float rotation = 360f / spawnNum;
+        Vector3 spawnDirection = Vector3.down;
+        
+        for (int i = 0; i < spawnNum; i++)
         {
-            Vector2 spawnPos = transform.position + (Vector3)(Random.insideUnitCircle * rallySpawnRange);
+            Vector3 spawnPos = spawnDirection + transform.position; 
             Instantiate(RallyPrefab, spawnPos, Quaternion.identity);
+            spawnDirection = Quaternion.Euler(0, 0, rotation) * spawnDirection;
         }
     }
     public static Vector2 RandomPointInBounds(Bounds bounds)
