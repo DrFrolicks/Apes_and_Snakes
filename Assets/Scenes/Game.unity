@@ -165,7 +165,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.049584627, y: 1.4177406}
+  m_Offset: {x: 0.049584627, y: 1.727886}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -176,7 +176,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4.0247045, y: 5.1557326}
+  m_Size: {x: 4.0247045, y: 3.279224}
   m_EdgeRadius: 0
 --- !u!1 &70372738
 GameObject:
@@ -2449,7 +2449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b7897ba578d089458ed31413bb5b51b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dimedAlpha: 0.75
+  dimedAlpha: 0.5
 --- !u!1 &1831171939
 GameObject:
   m_ObjectHideFlags: 0
@@ -3072,6 +3072,21 @@ PrefabInstance:
       propertyPath: m_randomSelectTagTarget
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3467220518564380500, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_betweenAngle
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220518592879879, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_bulletNum
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220518592879879, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_betweenDelay
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3467220518594436645, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -3092,10 +3107,40 @@ PrefabInstance:
       propertyPath: m_randomSelectTagTarget
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3467220518694724138, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_betweenAngle
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220518874256392, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_holeSize
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220518874256392, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_bulletNum
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220518874256392, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_bulletSpeed
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220519136694800, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_betweenDelay
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3467220519191745267, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
         type: 3}
       propertyPath: m_TagString
       value: Target
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220519363017686, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_betweenAngle
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3467220519602893759, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
         type: 3}
@@ -3114,6 +3159,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3467220519737759099, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
         type: 3}
+      propertyPath: m_betweenAngle
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220519737759099, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
       propertyPath: m_targetTagName
       value: Target
       objectReference: {fileID: 0}
@@ -3121,6 +3171,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_randomSelectTagTarget
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220519835601531, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_bulletNum
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3467220519899138517, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
         type: 3}
@@ -3212,6 +3267,16 @@ PrefabInstance:
       propertyPath: snakeSpawnArea
       value: 
       objectReference: {fileID: 11512853}
+    - target: {fileID: 3467220520026903325, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_bulletNum
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220520026903325, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_betweenDelay
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 3467220520048814141, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
         type: 3}
       propertyPath: m_targetTagName
@@ -3221,6 +3286,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_randomSelectTagTarget
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220520094618684, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_holeSize
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220520094618684, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_bulletNum
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 3467220520094618684, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
         type: 3}
@@ -3244,6 +3319,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3467220520277409743, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
         type: 3}
+      propertyPath: m_betweenAngle
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220520277409743, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
       propertyPath: m_targetTagName
       value: Target
       objectReference: {fileID: 0}
@@ -3251,6 +3331,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_randomSelectTagTarget
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220520289677915, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_betweenDelay
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220520371393834, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_betweenAngle
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3467220520492846118, guid: 0681fc85e252c5e4bb3a94cfa1aded21,
+        type: 3}
+      propertyPath: m_betweenAngle
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0681fc85e252c5e4bb3a94cfa1aded21, type: 3}

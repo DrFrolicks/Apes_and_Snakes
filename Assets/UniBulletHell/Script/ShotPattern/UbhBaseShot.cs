@@ -119,6 +119,9 @@ public abstract class UbhBaseShot : UbhMonoBehaviour
     /// </summary>
     public virtual void FinishedShot()
     {
+        //let snake know you shot 
+        Snake.inst.OnShotFinished(); 
+
         m_shooting = false;
         m_shotFinishedCallbackEvents.Invoke();
     }

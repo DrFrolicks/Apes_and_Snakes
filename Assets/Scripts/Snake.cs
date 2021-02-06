@@ -6,48 +6,96 @@ using Photon.Pun;
 
 public class Snake : MonoBehaviourPun
 {
+    public static Snake inst; 
 
-    //within wave
-    public float volleyInterval, snakeInterval;
-    public int volleysPerSnake;
-    public float snakeAttackDelay;
-    public float rallySpawnRange;
-    
+    //behavior parameters
+    public float attackChance, dieChance, moveChance;
+    public float moveTime;
+    public float snakeCheckInterval;
+    public float snakeInterval; 
+
     public Transform shotPatterns;
     public Transform spawnPosition;
     public GameObject RallyPrefab;
     public BoxCollider2D snakeSpawnArea;
 
+    public enum SNAKE_STATE {NULL, MOVE, ATTTACK, DIE};
 
     Bounds _snakeSpawnArea; 
     UbhShotCtrl shotCtrl;
+    bool shootingMAST;
+
+    //test
+    int startIndex = 39;
+
+    #region Photon Custom Properties 
+    public int State
+    {
+        get
+        {
+            if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("state"))
+            {
+                return -1;
+            }
+            else
+            {
+                return (int)PhotonNetwork.CurrentRoom.CustomProperties["state"];
+            }
+
+        }
+        set
+        {
+            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable
+            {
+                { "state", value},
+            };
+            PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+        }
+    }
+
+    #endregion
+
+    #region Unity Callbacks
+
+    private void Awake()
+    {
+        inst = this;
+        if (PhotonNetwork.IsMasterClient)
+            State = (int)SNAKE_STATE.NULL; 
+
+    }
     // Start is called before the first frame update
     void Start()
     {
         shotCtrl = GetComponent<UbhShotCtrl>();
         LoadShotPatterns();
 
-        if (PhotonNetwork.IsMasterClient)
-            StartCoroutine(SnakeBehavior());
+        StartCoroutine(SnakeBehavior());
 
-        _snakeSpawnArea = snakeSpawnArea.bounds; 
+        _snakeSpawnArea = snakeSpawnArea.bounds;
+        shootingMAST = false; 
     }
+    #endregion-
 
-    public void SpawnRPC()
+    #region RPC
+    public void MoveRPC()
     {
-        photonView.RPC("RPC_Spawn", RpcTarget.AllViaServer, RandomPointInBounds(_snakeSpawnArea));
+        State = (int)SNAKE_STATE.MOVE; 
+        photonView.RPC("RPC_Move", RpcTarget.AllViaServer, RandomPointInBounds(_snakeSpawnArea));
     }
 
     [PunRPC]
-    void RPC_Spawn(Vector2 spawnPosition)
+    void RPC_Move(Vector2 spawnPosition)
     {
+        
         ToggleChildSprites(true);
-        StartCoroutine(MoveTo(snakeAttackDelay / 5f, spawnPosition));
+        StartCoroutine(MoveTo(moveTime, spawnPosition));
     }
 
 
     public void ShootRPC(int patternIndex)
     {
+        State = (int)SNAKE_STATE.ATTTACK; 
         photonView.RPC("RPC_Shoot", RpcTarget.AllViaServer, patternIndex);
     }
 
@@ -60,6 +108,7 @@ public class Snake : MonoBehaviourPun
 
     public void DieRPC()
     {
+        State = (int)SNAKE_STATE.DIE; 
         photonView.RPC("RPC_Die", RpcTarget.AllViaServer); 
     }
 
@@ -70,18 +119,24 @@ public class Snake : MonoBehaviourPun
         SpawnRallies();
         transform.position = spawnPosition.position;
     }
+    #endregion
 
+    #region Helper Functions
     public void LoadShotPatterns()
     {
         List<ShotInfo> patterns = new List<ShotInfo>(shotPatterns.childCount + 1); 
         for(int i = 0; i < shotPatterns.childCount; i++)
         {
             patterns.Add(null); 
-            patterns[i] = new ShotInfo(shotPatterns.GetChild(i).GetComponent<UbhBaseShot>(), volleyInterval); 
+            patterns[i] = new ShotInfo(shotPatterns.GetChild(i).GetComponent<UbhBaseShot>(), 0f); 
         }
         shotCtrl.m_shotList = patterns; 
     }
 
+    public void OnShotFinished()
+    {
+        shootingMAST = false; 
+    }
 
     void ToggleChildSprites(bool visible)
     {
@@ -106,6 +161,7 @@ public class Snake : MonoBehaviourPun
             spawnDirection = Quaternion.Euler(0, 0, rotation) * spawnDirection;
         }
     }
+
     public static Vector2 RandomPointInBounds(Bounds bounds)
     {
         return new Vector2 (
@@ -113,22 +169,62 @@ public class Snake : MonoBehaviourPun
             Random.Range(bounds.min.y, bounds.max.y)
         );
     }
+    #endregion
+
     #region Coroutines 
     IEnumerator SnakeBehavior()
     {
         while (true)
         {
-            SpawnRPC();
-            yield return new WaitForSeconds(snakeAttackDelay);
-
-            for (int i = 0; i < volleysPerSnake; i++)
+            if(!PhotonNetwork.IsMasterClient || State == -1)
             {
-                ShootRPC(Random.Range(0, shotPatterns.childCount));
-                yield return new WaitForSeconds(volleyInterval);
+                shootingMAST = false; 
+                yield return new WaitForSeconds(snakeCheckInterval); 
+                continue; 
             }
 
-            DieRPC();
-            yield return new WaitForSeconds(snakeInterval);
+            if (State == (int)SNAKE_STATE.NULL || State == (int)SNAKE_STATE.DIE)
+            {
+                MoveRPC();
+                yield return new WaitForSeconds(moveTime * 1.25f);
+            }
+            else //state must be move or attack 
+            {
+                int timeWaited = 0; 
+                while(shootingMAST)
+                {
+                    //failsafe
+                    timeWaited++;
+                    if (timeWaited > 20)
+                        break; 
+
+                    yield return new WaitForSeconds(1f); 
+                }
+
+
+                float rng = Random.value; //move die or attack
+                
+                if (rng < moveChance) //move
+                {
+                    MoveRPC();
+                    yield return new WaitForSeconds(moveTime * 1.25f);
+                }
+                else if (rng < moveChance + attackChance) //attack
+                {
+                    shootingMAST = true;
+                    int patIndex = Random.Range(0, shotPatterns.childCount);
+                    print(startIndex + "current shot"); 
+                    ShootRPC(startIndex);
+                    startIndex++; 
+                }
+                else
+                {
+                    DieRPC();
+                    yield return new WaitForSeconds(snakeInterval); 
+                }
+
+            }
+                  
         }
     }
 

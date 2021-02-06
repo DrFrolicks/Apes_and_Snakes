@@ -347,11 +347,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68a28393628abc2479964e3d1fff10b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  volleyInterval: 5
-  snakeInterval: 5
-  volleysPerSnake: 2
-  snakeAttackDelay: 3
-  rallySpawnRange: 1
+  attackChance: 0.5
+  dieChance: 0.2
+  moveChance: 0.3
+  moveTime: 1
+  snakeCheckInterval: 1
+  snakeInterval: 3
   shotPatterns: {fileID: 3467220518594436645}
   spawnPosition: {fileID: 0}
   RallyPrefab: {fileID: 2894965072694266943, guid: e0ad2d1a0e8410c448d9aab23a0d87b3,

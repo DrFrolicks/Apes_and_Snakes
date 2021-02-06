@@ -45,7 +45,7 @@ public class Hand : MonoBehaviourPunCallbacks
             {
                 { "worth", value},
             }; 
-            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+            photonView.Owner.SetCustomProperties(props);
         }
     }
 
@@ -70,7 +70,7 @@ public class Hand : MonoBehaviourPunCallbacks
             {
                 { "invested", value},
             };
-            PhotonNetwork.LocalPlayer.SetCustomProperties(props);
+            photonView.Owner.SetCustomProperties(props);
         }
     }
     #endregion
