@@ -6,10 +6,16 @@ using UnityEngine.Events;
 static class Extensions
 {
     //utility
-    public static string ToMoney(this float s)
+    public static string ToMoney(this float s, bool includeCents = true)
     {
-
-        return string.Format("${0:.##}", s);
+        if (includeCents)
+        {
+            return string.Format("${0:.##}", s);
+        } else
+        {
+            return ("$" + (int)s);
+        }
+        
     }
 
 

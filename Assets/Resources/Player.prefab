@@ -205,12 +205,12 @@ GameObject:
   - component: {fileID: 4333970331523620846}
   - component: {fileID: 4109997725988265653}
   - component: {fileID: 7423130932540521606}
-  - component: {fileID: 4404710706845483182}
   - component: {fileID: 921747510588056106}
   - component: {fileID: 4574762033145988445}
   - component: {fileID: 5603960162660660679}
   - component: {fileID: -4738657989067084920}
   - component: {fileID: 3842889635824226671}
+  - component: {fileID: 4478771851245482584}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -277,22 +277,6 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!58 &4404710706845483182
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4333970331523620844}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.02, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.1
 --- !u!50 &921747510588056106
 Rigidbody2D:
   serializedVersion: 4
@@ -327,6 +311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invulnerableTime: 1.5
+  minWorth: 0
   OnMovement:
     m_PersistentCalls:
       m_Calls: []
@@ -353,7 +338,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameTag: {fileID: 9068139985719793334}
   movementDisplay: {fileID: 411879949280839921}
+  diamondSprite: {fileID: 2090018549732049222}
   sprites: {fileID: 422515237879931953}
+  minDiamondScale: 0.2
+  maxDiamondScale: 0.5
+  maxScaleWorth: 10
   OnInvestChange:
     m_PersistentCalls:
       m_Calls: []
@@ -384,6 +373,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textMesh: {fileID: 1605202544424228124}
+--- !u!58 &4478771851245482584
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4333970331523620844}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.03, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.05
 --- !u!1 &6056186484849735897
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,7 +765,7 @@ Transform:
   m_GameObject: {fileID: 6941499456884568107}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.033, y: -0.05, z: 0}
-  m_LocalScale: {x: 0.21824323, y: 0.20338684, z: 1}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
   m_Children: []
   m_Father: {fileID: 5762560198393845941}
   m_RootOrder: 1
@@ -850,8 +855,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.046, y: -0.326}
-  m_SizeDelta: {x: 1.25, y: 0.25}
+  m_AnchoredPosition: {x: -0.093, y: -0.295}
+  m_SizeDelta: {x: 0.5, y: 0.25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &1128344978850476835
 MeshRenderer:
@@ -919,7 +924,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Name
+  m_text: 'Name $10
 
 '
   m_isRightToLeft: 0
@@ -948,7 +953,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 2.2
+  m_fontSize: 1.4
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -984,7 +989,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 1
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -0.17312819, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

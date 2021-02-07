@@ -12,7 +12,7 @@ public class Hand : MonoBehaviourPunCallbacks
     public static GameObjectEvent OnLocalPlayerSet = new GameObjectEvent();
 
     public float invulnerableTime;
-
+    public float minWorth;  
     public BoolEvent OnMovement = new BoolEvent(); 
 
     float lastTimeHit = 0;
@@ -195,7 +195,7 @@ public class Hand : MonoBehaviourPunCallbacks
         {
             if (dip)
             {
-                Worth = Worth - (Worth * GameManager.inst.DipRate);
+                Worth = Mathf.Clamp(Worth - (Worth * GameManager.inst.DipRate), minWorth, float.MaxValue);
             } else
             {
                 Worth = Worth + (Worth * GameManager.inst.RallyRate);

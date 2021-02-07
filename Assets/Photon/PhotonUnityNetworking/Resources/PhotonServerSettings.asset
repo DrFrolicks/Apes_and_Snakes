@@ -42,6 +42,8 @@ MonoBehaviour:
   - RPC_Die
   - RPC_Shoot
   - RPC_Spawn
+  - RPC_Move
+  - RPC_Say
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

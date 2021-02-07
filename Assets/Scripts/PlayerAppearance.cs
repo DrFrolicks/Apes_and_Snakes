@@ -7,9 +7,12 @@ using TMPro;
 public class PlayerAppearance : MonoBehaviourPun
 {
     public TextMeshPro nameTag;
-    public TextMeshPro movementDisplay; 
-
+    public TextMeshPro movementDisplay;
+    public Transform diamondSprite;
     public GameObject sprites;
+
+    public float minDiamondScale, maxDiamondScale;
+    public float maxScaleWorth; 
 
     public BoolEvent OnInvestChange = new BoolEvent(); 
     float flashSeconds;
@@ -21,11 +24,12 @@ public class PlayerAppearance : MonoBehaviourPun
         hand.OnMovement.AddListener(CallFlash);
         hand.OnMovement.AddListener(ShowMovement);
         hand.OnInvestedChange.AddListener(RespondToInvestedChange);
+        hand.OnWorthChange.AddListener(RespondToWorthChange); 
     }
     // Start is called before the first frame update
     void Start()
     {
-        nameTag.text = photonView.Owner.NickName;
+        nameTag.text = photonView.Owner.NickName + " $1";
 
         flashSeconds = hand.invulnerableTime;
 
@@ -62,6 +66,17 @@ public class PlayerAppearance : MonoBehaviourPun
             c.a = opacity;
             r.color = c; 
         }
+    }
+    
+    void RespondToWorthChange(float worth)
+    {
+        //enlarge diamonds
+        diamondSprite.localScale = Vector3.one * Mathf.Lerp(minDiamondScale, maxDiamondScale, worth / maxScaleWorth);
+
+        //update worth display
+        string newString = nameTag.text.Substring(0, nameTag.text.IndexOf("$"));
+        newString += worth.ToMoney(false);
+        nameTag.text = newString;
     }
 
     void RespondToInvestedChange(bool invested)
