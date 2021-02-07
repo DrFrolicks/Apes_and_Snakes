@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 11483808}
   m_Layer: 0
   m_Name: EnemyTentacleBulletParent
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_centerBullet: {fileID: 161108}
   m_numOfTentacles: 3
-  m_numOfBulletsForOneTentacle: 3
+  m_numOfBulletsForOneTentacle: 6
   m_distanceBetweenBullets: 0.25
   m_enableCenterBullet: 1
   m_axisMove: 0

@@ -18,8 +18,8 @@ public class PlayerMovement : MonoBehaviourPun
         if(photonView.IsMine)
         {
             rb = GetComponent<Rigidbody2D>();
-            leftCorner = GameObject.Find("LEFT_CORNER_BOUNDARY").transform;
-            rightCorner = GameObject.Find("RIGHT_CORNER_BOUNDARY").transform;
+            leftCorner = GameObject.Find("/Play Area/LEFT_CORNER_BOUNDARY").transform;
+            rightCorner = GameObject.Find("/Play Area/RIGHT_CORNER_BOUNDARY").transform;
 
             //default to uninvested
             RespondToInvestChange(false); 

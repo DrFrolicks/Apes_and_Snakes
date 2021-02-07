@@ -157,6 +157,26 @@ public class Hand : MonoBehaviourPunCallbacks
 
     #endregion
 
+    #region Pun Callbacks
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+        base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
+
+        if (!targetPlayer.IsLocal && targetPlayer.ActorNumber == photonView.Owner.ActorNumber)
+        {
+            if(changedProps.ContainsKey("worth"))
+            {
+                OnWorthChange.Invoke((float)changedProps["worth"]); 
+            }        
+            if(changedProps.ContainsKey("invested"))
+            {
+                OnInvestedChange.Invoke((bool)changedProps["invested"]); 
+            }
+        }
+    }
+
+    #endregion
+
     #region RPC
 
     public void TransactionRPC(bool invest)
@@ -227,6 +247,7 @@ public class Hand : MonoBehaviourPunCallbacks
         {
             yield return new WaitForEndOfFrame(); 
         }
+        print("invoke invested with " + Invested); 
         OnInvestedChange.Invoke(Invested);
         OnWorthChange.Invoke(Worth);
     }

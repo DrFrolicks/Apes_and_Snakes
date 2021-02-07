@@ -25,16 +25,22 @@ public class PlayerAppearance : MonoBehaviourPun
         hand.OnMovement.AddListener(ShowMovement);
         hand.OnInvestedChange.AddListener(RespondToInvestedChange);
         hand.OnWorthChange.AddListener(RespondToWorthChange); 
+
+        
     }
     // Start is called before the first frame update
     void Start()
     {
         nameTag.text = photonView.Owner.NickName + " $1";
-
+        
         flashSeconds = hand.invulnerableTime;
 
         if (!photonView.IsMine)
+        {
+            print("nickname is " + photonView.Owner.NickName); 
             SetOpacity(0.5f);
+        }
+            
     }
 
     void ShowMovement(bool dip) 
