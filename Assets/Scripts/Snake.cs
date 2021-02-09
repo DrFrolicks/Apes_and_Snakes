@@ -2,24 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Realtime;
-using Photon.Pun; 
+using Photon.Pun;
+using UnityEngine.Events; 
 
 public class Snake : MonoBehaviourPun
 {
     public static Snake inst; 
 
     //behavior parameters
-    public float attackChance, dieChance, moveChance;
+    public float attackChance; //if snake's not attacking its moving
     public float moveTime;
     public float snakeCheckInterval;
-    public float snakeInterval; 
 
     public Transform shotPatterns;
     public Transform spawnPosition;
     public GameObject RallyPrefab;
     public BoxCollider2D snakeSpawnArea;
 
-    public enum SNAKE_STATE {NULL, MOVE, ATTTACK, DIE};
+    public enum SNAKE_STATE {NULL, MOVE, ATTTACK};
+
+    public UnityEvent OnHit = new UnityEvent(); 
 
     Bounds _snakeSpawnArea; 
     UbhShotCtrl shotCtrl;
@@ -74,6 +76,17 @@ public class Snake : MonoBehaviourPun
         _snakeSpawnArea = snakeSpawnArea.bounds;
         shootingMAST = false; 
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        print("collided"); 
+        if (other.CompareTag("Player"))
+        {
+            print("touched a player"); 
+            OnHit.Invoke(); 
+            SpawnRallies();
+        }
+    }
     #endregion-
 
     #region RPC
@@ -105,19 +118,6 @@ public class Snake : MonoBehaviourPun
     }
 
 
-    public void DieRPC()
-    {
-        State = (int)SNAKE_STATE.DIE; 
-        photonView.RPC("RPC_Die", RpcTarget.AllViaServer); 
-    }
-
-    [PunRPC]
-    void RPC_Die()
-    {
-        ToggleChildSprites(false);
-        SpawnRallies();
-        transform.position = spawnPosition.position;
-    }
     #endregion
 
     #region Helper Functions
@@ -148,8 +148,7 @@ public class Snake : MonoBehaviourPun
 
     void SpawnRallies()
     {
-        
-        int spawnNum = Mathf.Clamp((int)(PhotonNetwork.CountOfPlayers * 0.8f),1, int.MaxValue);
+        int spawnNum = Mathf.Clamp((int)(PhotonNetwork.CountOfPlayers * 0.5f),1, int.MaxValue);
         float rotation = 360f / spawnNum;
         Vector3 spawnDirection = Vector3.down;
         
@@ -182,7 +181,7 @@ public class Snake : MonoBehaviourPun
                 continue; 
             }
 
-            if (State == (int)SNAKE_STATE.NULL || State == (int)SNAKE_STATE.DIE)
+            if (State == (int)SNAKE_STATE.NULL)
             {
                 MoveRPC();
                 yield return new WaitForSeconds(moveTime * 1.25f);
@@ -203,12 +202,12 @@ public class Snake : MonoBehaviourPun
 
                 float rng = Random.value; //move die or attack
                 
-                if (rng < moveChance) //move
+                if (rng > attackChance) //move
                 {
                     MoveRPC();
                     yield return new WaitForSeconds(moveTime * 1.25f);
                 }
-                else if (rng < moveChance + attackChance) //attack
+                else  //attack
                 {
                     shootingMAST = true;
                     int patIndex = Random.Range(0, shotPatterns.childCount);
@@ -216,12 +215,6 @@ public class Snake : MonoBehaviourPun
                     ShootRPC(patIndex);
                     startIndex++; 
                 }
-                else
-                {
-                    DieRPC();
-                    yield return new WaitForSeconds(snakeInterval); 
-                }
-
             }
                   
         }

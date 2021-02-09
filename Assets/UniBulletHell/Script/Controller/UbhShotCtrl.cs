@@ -301,6 +301,6 @@ public sealed class UbhShotCtrl : UbhMonoBehaviour
     {
         m_shotList[index].m_shotObj.SetShotCtrl(this);
         m_shotList[index].m_shotObj.Shot();
-        //print("Shooting " + m_shotList[index].m_shotObj.name); 
+        print("Shooting " + m_shotList[index].m_shotObj.name); 
     }
 }

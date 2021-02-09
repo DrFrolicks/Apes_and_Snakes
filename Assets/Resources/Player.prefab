@@ -311,7 +311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   invulnerableTime: 1.5
-  minWorth: 0
+  minWorth: 0.5
   OnMovement:
     m_PersistentCalls:
       m_Calls: []
