@@ -6,20 +6,22 @@ using Photon.Pun;
 public class ChatDisplay : MonoBehaviourPun
 {
     const float duration = 2;
-    public TextMeshPro textMesh;
+    const string messageFormat = "/"{0}/" - {1}"
+    public TextMeshProUGUI textMesh;
     float lastSpeakTime = 0; 
    
     
     public void SayRPC(string str)
     {
-        if(GetComponent<Hand>().Invested)
-            photonView.RPC("RPC_Say", RpcTarget.All, str); 
+        //todo chat filter
+        photonView.RPC("RPC_Say", RpcTarget.All, str); 
     }
 
     [PunRPC]
     void RPC_Say(string str)
     {
-        textMesh.text = str;
+
+        textMesh.text.;
         lastSpeakTime = Time.time;
     }
 

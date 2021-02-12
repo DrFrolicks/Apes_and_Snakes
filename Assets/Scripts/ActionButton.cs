@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Michsky.UI.ModernUIPack; 
+using Michsky.UI.ModernUIPack;
+using UnityEngine.Events; 
 
 public class ActionButton : MonoBehaviour
 {
-    
+    public UnityEvent OnInvested, OnSold; 
     ButtonManager bm; 
     // Start is called before the first frame update
     void Start()
@@ -36,14 +37,17 @@ public class ActionButton : MonoBehaviour
 
     public void RespondToInvested(bool invested)
     {
+        
         if (!invested)
         {
             bm.SetButtonText($"YOLO - {Hand.localInstance.Worth.ToMoney()}");
-            bm.startColor = Color.green; 
+            bm.startColor = Color.green;
+            OnSold.Invoke(); 
         } else
         {
             bm.SetButtonText($"PULL OUT - {Hand.localInstance.Worth.ToMoney()}"); 
-            bm.startColor = Color.red;  
+            bm.startColor = Color.red;
+            OnInvested.Invoke(); 
         }
     } 
 }

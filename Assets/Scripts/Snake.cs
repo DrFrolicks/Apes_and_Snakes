@@ -66,6 +66,7 @@ public class Snake : MonoBehaviourPun
 
     }
     // Start is called before the first frame update
+
     void Start()
     {
         shotCtrl = GetComponent<UbhShotCtrl>();
@@ -150,7 +151,7 @@ public class Snake : MonoBehaviourPun
     {
         int spawnNum = Mathf.Clamp((int)(PhotonNetwork.CountOfPlayers * 0.5f),1, int.MaxValue);
         float rotation = 360f / spawnNum;
-        Vector3 spawnDirection = Vector3.down;
+        Vector3 spawnDirection = Vector3.down * 1/4f;
         
         for (int i = 0; i < spawnNum; i++)
         {

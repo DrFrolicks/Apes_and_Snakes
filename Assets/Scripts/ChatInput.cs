@@ -8,6 +8,6 @@ public class ChatInput : MonoBehaviour
     public void SayLocalPlayerRPC(string str)
     {
         GetComponent<TMP_InputField>().text = ""; 
-        Hand.localInstance.GetComponent<ChatDisplay>().SayRPC(str); 
+        //Hand.localInstance.GetComponent<ChatDisplay>().SayRPC(str); 
     }
 }
