@@ -4,10 +4,14 @@ using UnityEngine;
 using TMPro; 
 public class ChatInput : MonoBehaviour
 {
-
+    public ChatDisplay chatDisplay; 
     public void SayLocalPlayerRPC(string str)
     {
-        GetComponent<TMP_InputField>().text = ""; 
+        if (str == "")
+            return;  
+
+        GetComponent<TMP_InputField>().text = "";
         //Hand.localInstance.GetComponent<ChatDisplay>().SayRPC(str); 
+        chatDisplay.SayRPC(str);
     }
 }

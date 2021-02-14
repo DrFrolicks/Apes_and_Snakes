@@ -5,8 +5,8 @@ using TMPro;
 using Photon.Pun; 
 public class ChatDisplay : MonoBehaviourPun
 {
-    const float duration = 2;
-    const string messageFormat = "/"{0}/" - {1}"
+    const float duration = 4;
+    const string messageFormat = "\"{0}\" - {1}";
     public TextMeshProUGUI textMesh;
     float lastSpeakTime = 0; 
    
@@ -18,10 +18,11 @@ public class ChatDisplay : MonoBehaviourPun
     }
 
     [PunRPC]
-    void RPC_Say(string str)
+    void RPC_Say(string str, PhotonMessageInfo info)
     {
 
-        textMesh.text.;
+        string message = string.Format(messageFormat, str, info.Sender.NickName);
+        textMesh.text = message; 
         lastSpeakTime = Time.time;
     }
 
