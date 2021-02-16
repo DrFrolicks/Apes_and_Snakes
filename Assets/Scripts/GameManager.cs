@@ -4,7 +4,8 @@ using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
 using System.Linq;
-using UnityEngine.Events; 
+using UnityEngine.Events;
+using UnityEngine.SceneManagement; 
 public class GameManager : MonoBehaviourPunCallbacks
 {
     public static GameManager inst;
@@ -102,8 +103,25 @@ public class GameManager : MonoBehaviourPunCallbacks
         players = PhotonNetwork.PlayerList;
     }
 
+    private void Update()
+    {
+        if(Input.GetButtonDown("Cancel"))
+        {
+           
+            //add to playerpref for all time display 
+            if(Hand.localInstance != null)
+                PlayerPrefs.SetFloat("Earnings", PlayerPrefs.GetFloat("Earnings") + Mathf.Clamp(Hand.localInstance.Worth - 1, 0, float.MaxValue));
+
+            PhotonNetwork.LeaveRoom(); 
+        }
+    }
+
 
     #region Pun Callbacks
+    public override void OnLeftRoom()
+    {
+        SceneManager.LoadScene(0); 
+    }
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
     {
         base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);

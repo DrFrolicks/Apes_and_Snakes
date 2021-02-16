@@ -5,12 +5,12 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using Random = UnityEngine.Random;
-using UnityEngine.Events; 
-
+using UnityEngine.Events;
+using TMPro; 
 public class Launcher : MonoBehaviourPunCallbacks
 {
     public UnityEvent OnConnectedSuccess = new UnityEvent();
-    
+    public TMP_InputField roomCode; 
     //test
     private double t; 
     private void Awake()
@@ -42,14 +42,23 @@ public class Launcher : MonoBehaviourPunCallbacks
         Debug.Log("PUN Basics Tutorial/Launcher:OnJoinRandomFailed() was called by PUN. No random room available, so we create one.\nCalling: PhotonNetwork.CreateRoom");
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.IsVisible = true;
+        roomOptions.MaxPlayers = 6; 
 
-        int roomID = (int)(Random.value * 10); 
-        PhotonNetwork.CreateRoom($"TestRoom-{roomID}",roomOptions);
+        int roomID = (int)(Random.value * 1000); 
+        PhotonNetwork.CreateRoom($"{roomID}",roomOptions);
     }
     
     public override void OnJoinedRoom()
     {
         print($"My current room name is {PhotonNetwork.CurrentRoom.Name}");
+    }
+
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        print("Failed to join room, joining random room instead");
+        roomCode.text = "";
+        PhotonNetwork.JoinRandomRoom(); 
+        
     }
 
 
@@ -58,7 +67,13 @@ public class Launcher : MonoBehaviourPunCallbacks
         if(PhotonNetwork.IsMasterClient)
             PhotonNetwork.LoadLevel(1);
     }
-    
+
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        //todo show this error
+        print("Create room failed. " + message); 
+    }
+
     /// <summary>
     /// currently prints rooms
     /// </summary>
@@ -86,17 +101,23 @@ public class Launcher : MonoBehaviourPunCallbacks
     /// </summary>
     public void Connect()
     {
-        
+        PhotonNetwork.ConnectUsingSettings();
+    }
+
+    public void JoinRoom()
+    {
         // we check if we are connected or not, we join if we are , else we initiate the connection to the server.
         if (PhotonNetwork.IsConnected)
         {
             // #Critical we need at this point to attempt joining a Random Room. If it fails, we'll get notified in OnJoinRandomFailed() and we'll create one.
-            PhotonNetwork.JoinRandomRoom();
-        }
-        else
-        {
-            // #Critical, we must first and foremost connect to Photon Online Server.
-            PhotonNetwork.ConnectUsingSettings();
+            if(roomCode.text == "")
+            {
+                PhotonNetwork.JoinRandomRoom();
+            } else
+            {
+                PhotonNetwork.JoinRoom(roomCode.text); 
+            }
+            
         }
     }
 

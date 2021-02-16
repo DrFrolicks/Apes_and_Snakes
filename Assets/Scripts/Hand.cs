@@ -21,6 +21,14 @@ public class Hand : MonoBehaviourPunCallbacks
     public BoolEvent OnInvestedChange = new BoolEvent();
     public UnityEvent OnDeath = new UnityEvent(); 
 
+    public bool IsInvulnerable
+    {
+        get
+        {
+            return Time.time < lastTimeHit + invulnerableTime; 
+        }
+    }
+
     PlayerMovement playerMovement; 
 
     #region Photon Custom Properties Properties
@@ -134,7 +142,7 @@ public class Hand : MonoBehaviourPunCallbacks
 
         if (!photonView.IsMine)
         {
-            if (collision.CompareTag("Tendy") && Time.time > lastTimeHit + invulnerableTime)
+            if (collision.CompareTag("Tendy") && IsInvulnerable)
             {
                 Destroy(collision.gameObject);
             }
@@ -144,11 +152,11 @@ public class Hand : MonoBehaviourPunCallbacks
 
 
 
-       if(collision.CompareTag("Bullet") && Time.time > lastTimeHit + invulnerableTime)
+       if(collision.CompareTag("Bullet") && IsInvulnerable)
         {
             ApplyMovementRPC(true); 
         } 
-       if(collision.CompareTag("Tendy") && Time.time > lastTimeHit + invulnerableTime)
+       if(collision.CompareTag("Tendy") && IsInvulnerable)
         {
             ApplyMovementRPC(false);
             Destroy(collision.gameObject); 

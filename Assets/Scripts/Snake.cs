@@ -80,10 +80,8 @@ public class Snake : MonoBehaviourPun
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        print("collided"); 
         if (other.CompareTag("Player"))
         {
-            print("touched a player"); 
             OnHit.Invoke(); 
             SpawnRallies();
         }

@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_centerBullet: {fileID: 161108}
   m_numOfTentacles: 3
-  m_numOfBulletsForOneTentacle: 6
+  m_numOfBulletsForOneTentacle: 5
   m_distanceBetweenBullets: 0.25
   m_enableCenterBullet: 1
   m_axisMove: 0
@@ -79,7 +79,7 @@ Transform:
   m_GameObject: {fileID: 161108}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_Children: []
   m_Father: {fileID: 460030}
   m_RootOrder: 0
