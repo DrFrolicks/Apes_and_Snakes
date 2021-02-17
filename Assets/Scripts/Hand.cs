@@ -142,21 +142,18 @@ public class Hand : MonoBehaviourPunCallbacks
 
         if (!photonView.IsMine)
         {
-            if (collision.CompareTag("Tendy") && IsInvulnerable)
+            if (collision.CompareTag("Tendy") && !IsInvulnerable)
             {
                 Destroy(collision.gameObject);
             }
             return;
         }
 
-
-
-
-       if(collision.CompareTag("Bullet") && IsInvulnerable)
+       if(collision.CompareTag("Bullet") && !IsInvulnerable)
         {
             ApplyMovementRPC(true); 
         } 
-       if(collision.CompareTag("Tendy") && IsInvulnerable)
+       if(collision.CompareTag("Tendy") && !IsInvulnerable)
         {
             ApplyMovementRPC(false);
             Destroy(collision.gameObject); 
