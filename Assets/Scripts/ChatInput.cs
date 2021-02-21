@@ -4,14 +4,33 @@ using UnityEngine;
 using TMPro; 
 public class ChatInput : MonoBehaviour
 {
-    public ChatDisplay chatDisplay; 
+    public TextAsset filterWords; 
+    
+    public ChatDisplay chatDisplay;
+
+    TMP_InputField input;
+
+    private void Start()
+    {
+        input = GetComponent<TMP_InputField>(); 
+    }
     public void SayLocalPlayerRPC(string str)
     {
-        if (str == "")
-            return;  
+        if (str != "")
+        {
+            string[] inputWords = str.Split(); 
+            foreach(string word in inputWords)
+            {
+                if(filterWords.text.Contains(word))
+                {
+                    str = "***"; 
+                }
+            }
+            chatDisplay.SayRPC(str);
+        }
 
-        GetComponent<TMP_InputField>().text = "";
+
         //Hand.localInstance.GetComponent<ChatDisplay>().SayRPC(str); 
-        chatDisplay.SayRPC(str);
+        input.text = "";
     }
 }

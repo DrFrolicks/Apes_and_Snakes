@@ -93,6 +93,14 @@ namespace Photon.Pun.Demo.PunBasics
 			}
 		}
 
+        private void OnApplicationPause(bool pause)
+        {
+            if(pause)
+            {
+				QuitApplication();
+			}
+        }
+
         #endregion
 
         #region Photon Callbacks
