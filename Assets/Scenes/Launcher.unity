@@ -817,6 +817,7 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
   roomCode: {fileID: 129487159}
+  filterWords: {fileID: 4900000, guid: 97afb769048c13840bdf3e996cd7e201, type: 3}
 --- !u!4 &262402353
 Transform:
   m_ObjectHideFlags: 0

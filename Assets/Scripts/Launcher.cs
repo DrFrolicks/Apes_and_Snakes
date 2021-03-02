@@ -10,9 +10,10 @@ using TMPro;
 public class Launcher : MonoBehaviourPunCallbacks
 {
     public UnityEvent OnConnectedSuccess = new UnityEvent();
-    public TMP_InputField roomCode; 
-    //test
-    private double t; 
+    public TMP_InputField roomCode;
+
+    public TextAsset filterWords;
+
     private void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -24,6 +25,13 @@ public class Launcher : MonoBehaviourPunCallbacks
         Connect();
     }
 
+    private void Update()
+    {
+        if (Input.GetButtonDown("Cancel"))
+        {
+            Application.Quit(); 
+        }
+    }
     #region  Photon PUN Callbacks
 
     public override void OnConnectedToMaster()
@@ -97,7 +105,8 @@ public class Launcher : MonoBehaviourPunCallbacks
     /// <summary>
     /// Start the connection process.
     /// - If already connected, we attempt joining a random room
-    /// - if not yet connected, Connect this application instance to Photon Cloud Network
+    /// - if not yet connected, Connect this 
+    /// instance to Photon Cloud Network
     /// </summary>
     public void Connect()
     {
@@ -117,12 +126,16 @@ public class Launcher : MonoBehaviourPunCallbacks
             {
                 PhotonNetwork.JoinRoom(roomCode.text); 
             }
-            
         }
     }
 
     public void SetLocalPlayerDisplayName(String name)
     {
+        if (filterWords.text.Contains(name))
+        {
+            name = "***";
+        }
+
         PhotonNetwork.NickName = name; 
         PlayerPrefs.SetString("Name", name);
     }

@@ -116,6 +116,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
+    private void OnApplicationPause(bool pause)
+    {
+        if(pause)
+        {
+            PhotonNetwork.LeaveRoom(); 
+        }
+    }
+
 
     #region Pun Callbacks
     public override void OnLeftRoom()

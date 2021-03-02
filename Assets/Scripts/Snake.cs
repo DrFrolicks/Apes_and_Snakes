@@ -28,7 +28,7 @@ public class Snake : MonoBehaviourPun
     bool shootingMAST;
 
 
-    int startIndex = 0; 
+    int startIndex = 15; 
     #region Photon Custom Properties 
     public int State
     {
@@ -212,7 +212,7 @@ public class Snake : MonoBehaviourPun
                     int patIndex = Random.Range(0, shotPatterns.childCount);
                     //print(startIndex + "current shot"); 
                     ShootRPC(patIndex);
-                    startIndex++; 
+                    //startIndex++; 
                 }
             }
                   
