@@ -12,7 +12,7 @@ public class AdDisplay : MonoBehaviour
     public string myVideoPlacement = "video";
     public bool adStarted;
 
-    private bool testMode = true;
+    private bool testMode = false;
 
 
     private void Awake()
